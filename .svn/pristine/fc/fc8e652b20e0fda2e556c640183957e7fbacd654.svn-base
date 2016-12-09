@@ -1,0 +1,26 @@
+package com.spark.network.util;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class stringConvertDate {
+
+	public static String dateConvertString(Date date) {
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String formattedDate = format.format(date);
+		return formattedDate;
+	}
+
+	public static Date stringConvertDatei(String date) {
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd ");
+		Date d = null;
+		try {
+			d = format.parse(date);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return d;
+	}
+
+}

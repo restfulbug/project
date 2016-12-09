@@ -1,0 +1,50 @@
+package com.spark.network.service;
+
+import java.io.InputStream;
+import java.util.List;
+
+import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.task.Comment;
+
+import com.spark.network.entity.LeaveForm;
+import com.spark.network.entity.RepairForm;
+import com.spark.network.form.BaseForm;
+import com.spark.network.form.TaskVO;
+
+public interface IProcessService {
+
+	List<TaskVO> listLeaTasks(String userId);
+	
+	List<TaskVO> listRepTasks(String userId);
+	
+	List<TaskVO> listDisTasks(String userId);
+	
+	List<BaseForm> listLeaveFrom(Integer userId);
+	
+	List<BaseForm> listRepairForm(Integer userId);
+
+	ProcessInstance startLeave(LeaveForm leaveForm);
+	
+	 ProcessInstance startRep(RepairForm repairForm);
+
+	InputStream getDiagram(String processInstanceId);
+	
+	InputStream getpng(String Id);
+
+	List<TaskVO> listLeaAssigneeTasks(String id);
+	
+	List<TaskVO> listRepAssigneeTasks(String id);
+	
+	 public void claim(String taskId,String userId);
+
+	ProcessInstance getProcessInstance(String taskId);
+	
+	public void complete(String taskId,String content,String userId);
+	
+	public void cancelAdjust(String taskId,String content,String userId) ;
+
+	List<Comment> findCommentByTaskId(String taskId);
+
+	List<Comment> findCommentByPId(String pi);
+
+}

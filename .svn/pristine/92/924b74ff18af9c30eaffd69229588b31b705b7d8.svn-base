@@ -1,0 +1,27 @@
+package com.spark.network.handler;
+
+
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.spark.network.entity.Dictionary;
+import com.spark.network.service.IDictionaryService;
+
+@Controller
+public class DicController {
+	
+	@Resource(name="dictionaryService")
+	private IDictionaryService dictionaryService;
+	
+	@RequestMapping(value="/dic")
+	public String show(Map<String, Object> map){
+		map.put("dic", new Dictionary());
+		map.put("dics", dictionaryService.getDisByKeyWord());
+		return"dic/dictionary";
+	}
+
+}

@@ -1,0 +1,16 @@
+package com.spark.network.service;
+
+import java.util.List;
+
+import com.spark.network.entity.Permission;
+
+public interface IPermissionService {
+	
+	public void save(Permission permission);
+	
+	public void deleteById(Integer id);
+
+	public Permission getById(Integer id);
+	
+	public List<Permission>getAll();
+}

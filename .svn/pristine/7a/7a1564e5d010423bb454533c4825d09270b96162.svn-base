@@ -1,0 +1,54 @@
+package com.spark.network.handler;
+
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.spark.network.entity.Role;
+import com.spark.network.service.IRoleService;
+import com.spark.network.service.IUserService;
+
+@Controller
+public class RoleController {
+	
+	@Resource(name="roleService")
+	private IRoleService roleService;
+	@Resource(name="userService")
+	private IUserService userService;
+	
+	@RequestMapping(value="/role",method=RequestMethod.PUT)
+	public String addRole(Role role){
+		roleService.save(role);
+		return "";
+	}
+	
+	@RequestMapping(value="/role{id}",method=RequestMethod.DELETE)
+	public String deleteRole(@RequestParam(value="id")Integer id){
+		roleService.delete(id);
+		return "";
+	}
+	
+	@RequestMapping(value="/role{id}",method=RequestMethod.PUT)
+	public String getRole(@RequestParam(value="id")Integer id){
+		roleService.getById(id);
+		return "";
+	}
+	
+	@RequestMapping(value="/roles",method=RequestMethod.PUT)
+	public String getAll(Map<String,Object> map){
+		map.put("roles", roleService.getAll());
+		return "";
+	}
+	@RequestMapping(value="/role-list")
+	public String list(Map<String,Object> map){
+		map.put("roles", roleService.getAll());
+		map.put("users", userService.getAllExist("是"));
+		return "role/role";
+	}
+	
+}

@@ -1,0 +1,70 @@
+package com.spark.network.realm;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.AuthenticationInfo;
+import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.SimpleAuthenticationInfo;
+import org.apache.shiro.authz.AuthorizationException;
+import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.authz.SimpleAuthorizationInfo;
+import org.apache.shiro.realm.AuthorizingRealm;
+import org.apache.shiro.subject.PrincipalCollection;
+
+import com.spark.network.entity.Menu;
+import com.spark.network.entity.Role;
+import com.spark.network.entity.User;
+import com.spark.network.service.IUserService;
+
+public class MyRealm extends AuthorizingRealm {
+
+	@Resource(name = "userService")
+	private IUserService userService;
+
+	// 授权过程
+	@Override
+	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
+		SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
+		String account = (String) getAvailablePrincipal(principals);
+		List<String> roles = new ArrayList<String>();  
+		List<String> menus = new ArrayList<String>();
+		User user = userService.getByAccount(account);
+		if (user != null) {
+			if (user.getRoles() != null && user.getRoles().size() > 0) {
+			for (Role role : user.getRoles()) {
+				roles.add(role.getRoleName());
+				if (role.getMenus() != null && role.getMenus().size() > 0) {
+					for (Menu menu : role.getMenus()) {
+						if(!StringUtils.isEmpty(menu.getParentId())){
+							menus.add(menu.getParentId());
+						}
+					}
+				}
+			}
+			}
+			}else{
+				throw new AuthorizationException();
+		}
+		info.addRoles(roles);
+		info.addStringPermissions(menus);
+		return info;
+	}
+
+	// 认证过程
+	@Override
+	protected AuthenticationInfo doGetAuthenticationInfo(
+			AuthenticationToken token) throws AuthenticationException {
+		String principal = (String) token.getPrincipal();
+		User user = userService.getByAccount(principal);
+		String credentials = user.getPassword();
+		String realmName = getName();
+	SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(principal, credentials, realmName);
+	return info;
+		}
+
+}

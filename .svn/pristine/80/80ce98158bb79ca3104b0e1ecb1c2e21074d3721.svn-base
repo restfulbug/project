@@ -1,0 +1,90 @@
+﻿<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%@ include file="/commons/taglibs.jsp"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title></title>
+<link rel="stylesheet" href="${ctx}/css/style.css" type="text/css" />
+<link rel="stylesheet" href="${ctx}/css/main.css" type="text/css" />
+<script type="text/javascript" src="${pageContext.request.contextPath }/js/jquery-1.4.2.min.js"></script>
+<script type="text/javascript">
+$(function(){
+	$(".delete").click(function(){
+		var label = $(this).next(":hidden").val();
+		var flag = confirm("确定要删除用户"+" " + label +" "+"吗?");
+		if(flag){
+			var url = $(this).attr("href");
+			
+			$("#_form").attr("action", url);
+			$("#_method").val("DELETE");
+			$("#_form").submit();
+		}
+		
+		return false;
+	});
+})
+</script>
+
+</head>
+
+<body>
+   <form action="" method="post" id="_form">
+		<input type="hidden" id="_method" name="_method"/>
+	</form>
+	<div id="main">
+
+        
+      <div class="">
+
+                <input type="button" value="添加" class="input_button3" onClick="add()"/>
+      </div>
+        
+      <div class="sort_switch">
+          <ul id="TabsNav">
+          	  <li class="selected"><a href="#">用户</a></li>
+          </ul>
+      </div>
+      
+      <div class="sort_content">
+          <table class="tableHue1" width="100%" border="1" bordercolor="#a4d5e3" cellspacing="0" cellpadding="0">
+              <thead>
+                <tr>
+                  <td width="20%"><strong>姓名</strong></td>
+                  <td width="10%"><strong>是否在职</strong></td>
+                  <td width="40%"><strong>电话</strong></td>
+                  <td width="20%"><strong>操作</strong></td>
+                </tr>
+              </thead>
+              <tbody id="tbody">
+              <c:forEach items="${page.content}" var="user">
+                <tr>
+                  <td>${user.userName}</td>
+                  <td>${user.isExist}</td>
+                  <td>${user.telephone}</td>
+                  <td><a href="${ctx}/user/${user.id}"  class="delete">删除</a>
+                  <input type="hidden" value="${user.userName}"/></td>
+                </tr>
+              </c:forEach>
+              <tr>
+				<td colspan="8" height="40px">
+					共 ${page.totalElements } 条记录
+					共 ${page.totalPages } 页
+					当前 ${page.number + 1 } 页
+					<a href="?pageNo=${page.number + 1 - 1 }">上一页</a>
+					<a href="?pageNo=${page.number + 1 + 1 }" id="page">下一页</a>
+				</td>
+			</tr>
+              </tbody>
+          </table>
+      </div>
+</div>
+</body>
+<script>
+	function add() {
+		window.location.href="user-add";
+	}
+</script>
+
+</html>

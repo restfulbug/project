@@ -1,0 +1,62 @@
+package com.spark.network.junit;
+
+import java.sql.SQLException;
+import java.util.List;
+
+import org.junit.Test;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import com.spark.network.entity.LeaveForm;
+import com.spark.network.form.BaseForm;
+import com.spark.network.repository.DictionaryRepository;
+import com.spark.network.repository.RepairFormRepository;
+import com.spark.network.service.ILeaveFormService;
+import com.spark.network.service.IProcessService;
+
+
+public class testJpa {
+
+	private ApplicationContext ctx;
+	
+	private IProcessService processService;
+	private ILeaveFormService leaveFormService;
+	@SuppressWarnings("unused")
+	private DictionaryRepository dictionaryRepository;
+	private RepairFormRepository repairFormRepository;
+	
+	{
+		ctx = new ClassPathXmlApplicationContext("applicationContext.xml");
+		leaveFormService = (ILeaveFormService) ctx.getBean("leaveFormService"); 
+		dictionaryRepository = (DictionaryRepository) ctx.getBean("dictionaryRepository"); 
+	    processService = (IProcessService) ctx.getBean("processService");
+	    repairFormRepository = (RepairFormRepository) ctx.getBean("repairFormRepository");
+	}
+	
+	
+	public void test() {
+		List<LeaveForm> leaveForms = leaveFormService.ListLeaveForm(1);
+		
+		for (LeaveForm leaveForm : leaveForms) {
+			System.out.println(leaveForm.getId());
+		}
+	}
+	@Test
+	public void test1() {
+		List<BaseForm> process = processService.listLeaveFrom(1);
+		
+			System.out.println(process.size());
+	
+	
+		}
+	@Test
+	public void testcount() throws SQLException {
+		List<String[]> resultSet = repairFormRepository.counts();
+	     for (String[] objects : resultSet) {
+	    	 System.out.println(objects);
+		}
+	}
+	}
+	
+	
+	

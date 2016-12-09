@@ -1,0 +1,48 @@
+package com.spark.network.service.impl;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.spark.network.entity.Role;
+import com.spark.network.repository.RoleRepository;
+import com.spark.network.service.IRoleService;
+
+@Service(value="roleService")
+public class RoleServiceImpl implements IRoleService {
+
+	@Resource(name="roleRepository")
+	private RoleRepository roleRepository;
+	
+	@Transactional
+	public void save(Role role) {
+	 roleRepository.save(role);
+		
+	}
+	
+	@Transactional(readOnly=true)
+	public Role getRoleByRoleName(String roleName) {
+		return roleRepository.findRoleByRoleName(roleName);
+	}
+
+	@Transactional
+	public void delete(Integer id) {
+    roleRepository.delete(id);		
+	}
+
+	@Transactional(readOnly=true)
+	public Role getById(Integer id) {
+		return roleRepository.findOne(id);
+	}
+
+	@Transactional(readOnly=true)
+	public List<Role> getAll() {
+		return roleRepository.findAll();
+	}
+
+	
+
+}

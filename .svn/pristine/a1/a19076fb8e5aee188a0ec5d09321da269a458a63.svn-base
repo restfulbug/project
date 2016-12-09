@@ -1,0 +1,139 @@
+package com.spark.network.junit;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.activiti.engine.ProcessEngine;
+import org.activiti.engine.RepositoryService;
+import org.activiti.engine.TaskService;
+import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.task.Task;
+import org.junit.Test;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+
+public class NetWorkTest {
+	ProcessEngine processEngine ;
+	
+	
+	private ApplicationContext ctx;
+	@SuppressWarnings("unused")
+	private RepositoryService repositoryService;
+
+	
+	{
+		ctx = new ClassPathXmlApplicationContext("applicationContext.xml");
+		processEngine = (ProcessEngine)ctx.getBean("processEngine");
+	}
+	
+	
+	//部署流程
+	@Test
+	public void deploymentProcessDefinition() {
+		InputStream inpursreambpmn = this.getClass().getResourceAsStream("network2.bpmn");
+		InputStream inpursreampng = this.getClass().getResourceAsStream("network2.png");
+		 processEngine.getRepositoryService()
+		.createDeployment()
+		.name("networkTest")
+		.addInputStream("network2.bpmn", inpursreambpmn)
+		.addInputStream("network2.png", inpursreampng)
+		.deploy();
+		
+	}
+	
+	//删除流程部署
+	@Test
+	public void deleteDeplotment() {
+		 String deploymentId = "15001";
+		processEngine.getRepositoryService().deleteDeployment(deploymentId );
+	}
+	
+	
+	//启动流程实例
+	@Test
+	public void startProcessInstance() {
+		String processInstancekey = "network";
+		 processEngine.getRuntimeService()
+		.startProcessInstanceByKey(processInstancekey, "");
+		
+	}
+	//查询我的任务
+	@Test
+	public void queryMyTask() {
+		String asignee = "小刚";
+		 List<Task> list = processEngine.getTaskService()
+		.createTaskQuery()
+		.taskAssignee(asignee )
+		.list();
+		 System.out.println(list.size());
+		 if(list.size()>0&&list!=null) {
+			 for(Task t:list) {
+				 System.out.println(t.getId()+"   "+t.getName()+"   "+t.getTaskDefinitionKey());
+			 }
+		 }
+	}
+	//查询流程变量的值
+	@Test
+	public void getVariables() {
+		TaskService taskService = processEngine.getTaskService();
+		String taskid = "6106";
+//		int a = (int) taskService.getVariable(taskid, "����int");
+//		Date time = (Date) taskService.getVariable(taskid , "����date");
+//		String s =  (String) taskService.getVariable(taskid , "����String");
+//		System.out.println(a);
+//		System.out.println(time);
+//		System.out.println(s);
+		String p =  (String) taskService.getVariable(taskid, "user");
+		System.out.println(p);
+		
+		
+	}
+	//中间设置流程变量
+	@Test
+	public void setVariables() {
+		String taskName = "值班人员填写报修单";
+		 List<Task> tasks = processEngine.getTaskService().createTaskQuery().taskName(taskName).list();
+		 for (Task task : tasks) {
+			String executionId = task.getExecutionId();
+			processEngine.getRuntimeService().setVariable(executionId, "user", "张三");
+		}
+	}
+	
+	
+	//完成我的任务
+	@Test
+	public void completeMyTask() {
+		String taskid = "52502";
+		Map<String, Object> condition = new HashMap<String, Object>();
+	condition.put("user", "user");
+		processEngine.getTaskService().complete(taskid);
+	//	.complete(taskid,condition );
+	}
+	
+	//判断流程是否结束
+	@Test
+	public void isProcessEnd() {
+		String processinstanceid = "6101";
+		ProcessInstance pi = processEngine.getRuntimeService()
+		.createProcessInstanceQuery()
+		.processInstanceId(processinstanceid )
+		.singleResult();
+		if(pi==null) {
+			System.out.println("流程实例结束");
+		} else {
+			System.out.println("流程实例正在运行");
+		}
+	}
+	//终结流程
+	@Test
+	public void termitProcessINstance() {
+		String processInstanceId = "32501";
+		processEngine.getRuntimeService().deleteProcessInstance(processInstanceId , "");
+		
+	}
+	
+
+
+}

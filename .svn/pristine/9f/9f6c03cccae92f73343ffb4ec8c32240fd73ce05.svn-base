@@ -1,0 +1,102 @@
+package com.spark.network.entity;
+
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+
+
+@Entity
+@Table(name = "t_user")
+public class User implements Serializable {
+
+	private static final long serialVersionUID = 7419229779731522702L;
+
+	private int id;
+	private String account;
+	private String password;
+	private String userName;
+	private String telephone;
+	private String isExist;
+	private String loginIp;	// 上次登陆IP
+	private Date loginDate;	// 上次登陆日期
+	
+	private Collection<Role> roles;
+	@Id
+	@GeneratedValue
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	@Column(name="c_account",unique=true)
+	public String getAccount() {
+		return account;
+	}
+	public void setAccount(String account) {
+		this.account = account;
+	}
+	@Column(name="c_password")
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	@Column(name="c_username")
+	public String getUserName() {
+		return userName;
+	}
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+	@Column(name="c_telephone")
+	public String getTelephone() {
+		return telephone;
+	}
+	public void setTelephone(String telephone) {
+		this.telephone = telephone;
+	}
+	
+	@ManyToMany(fetch=FetchType.EAGER)
+	@JoinTable(name="t_user_role",joinColumns={@JoinColumn(name="user_id",referencedColumnName="id")},
+	inverseJoinColumns={@JoinColumn(name="role_id",referencedColumnName="id")})
+	public Collection<Role> getRoles() {
+		return roles;
+	}
+	public void setRoles(Collection<Role> roles) {
+		this.roles = roles;
+	}
+	
+	@Column(name="c_is_exit",length=20)
+	public String getIsExist() {
+		return isExist;
+	}
+	public void setIsExist(String isExist) {
+		this.isExist = isExist;
+	}
+	@Column(name="c_login_ip")
+	public String getLoginIp() {
+		return loginIp;
+	}
+	public void setLoginIp(String loginIp) {
+		this.loginIp = loginIp;
+	}
+	@Column(name="c_login_date")
+	public Date getLoginDate() {
+		return loginDate;
+	}
+	public void setLoginDate(Date loginDate) {
+		this.loginDate = loginDate;
+	}
+}

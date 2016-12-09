@@ -1,0 +1,93 @@
+package com.spark.network.junit;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.Test;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import com.spark.network.entity.Permission;
+import com.spark.network.entity.Role;
+import com.spark.network.entity.User;
+import com.spark.network.service.IPermissionService;
+import com.spark.network.service.IRoleService;
+import com.spark.network.service.IUserService;
+import com.spark.network.util.GobelKey;
+
+public class testInitSystemData{
+ 
+	private IRoleService roleService;
+	private IUserService userService;
+	private IPermissionService permissionService;	
+	private ApplicationContext ctx;
+	{
+		ctx =  new ClassPathXmlApplicationContext("applicationContext.xml");
+		userService =  (IUserService) ctx.getBean("userService");
+		 roleService = (IRoleService) ctx.getBean("roleService");
+		 permissionService = (IPermissionService) ctx.getBean("permissionService");
+	}
+	@Test
+	public void initPermission() throws Exception{
+		List<Permission> list = new ArrayList<Permission>();
+		Permission pmss1 = new Permission();
+		pmss1.setDescription("新建用户");
+		pmss1.setPerName("user:create");
+
+		Permission pmss2 = new Permission();
+		
+		pmss2.setDescription("编辑用户");
+		pmss2.setPerName("user:edit");
+		
+		Permission pmss3 = new Permission();
+		
+		pmss3.setDescription("删除用户");
+		pmss3.setPerName("user:delete");
+		
+		Permission pmss4 = new Permission();
+		
+		pmss4.setDescription("审核用户");
+		pmss4.setPerName("user:audit");
+		
+		list.add(pmss1);
+		list.add(pmss2);
+		list.add(pmss3);
+		list.add(pmss4);
+		
+		for(Permission permission : list){
+			permissionService.save(permission);
+		}
+	}
+	
+	@Test
+	public void initAdminRole() throws Exception{
+
+		Role role = new Role();
+		role.setRoleName("administrator");
+		role.setDescription("系统管理员角色");
+		Role role1 = new Role();
+		role1.setRoleName("generaluser");
+		role1.setDescription("一般管理员管理员角色");
+		
+		roleService.save(role);
+		roleService.save(role1);
+	}
+	
+	@Test
+	public void initAdminUser(){
+		List<Role> roles = new ArrayList<Role>();
+		 Role  role = roleService.getRoleByRoleName("administrator"); 
+	     Role  role2 = roleService.getRoleByRoleName("generaluser"); 
+		roles.add(role);
+		roles.add(role2);
+	    User user = new User();
+		user.setAccount("admin");
+		user.setPassword("123456");
+		user.setUserName("july");
+		user.setIsExist(GobelKey.YES);
+		
+		user.setTelephone("15737315768");
+		user.setRoles(roles);
+		userService.save(user);
+	}
+}
